@@ -14,13 +14,12 @@ const app = express();
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
+const BASE_URL = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
 
 const N8N_WEBHOOK_URL =
   process.env.N8N_WEBHOOK_URL ||
   'https://growito-n8n-d85d21478a6e.herokuapp.com/webhook/bt-resposta-whatsapp';
 
-// Local no Windows:
-// depois, no Render com disco persistente, você troca via variável de ambiente para /data/auth
 const AUTH_DIR = process.env.AUTH_DIR || './auth';
 
 let sock;
@@ -69,7 +68,7 @@ async function startBot() {
 
         if (qr) {
           latestQr = await QRCode.toDataURL(qr);
-          console.log(`QR gerado. Abra: http://localhost:${PORT}/qr`);
+          console.log(`QR gerado. Abra: ${BASE_URL}/qr`);
         }
 
         if (connection === 'open') {
@@ -229,7 +228,7 @@ app.post('/send', async (req, res) => {
 
 app.listen(PORT, async () => {
   console.log(`Servidor rodando na porta ${PORT}`);
-  console.log(`Health: http://localhost:${PORT}/health`);
-  console.log(`QR: http://localhost:${PORT}/qr`);
+  console.log(`Health: ${BASE_URL}/health`);
+  console.log(`QR: ${BASE_URL}/qr`);
   await startBot();
 });
